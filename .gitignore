@@ -1,0 +1,25 @@
+*.iml
+.gradle/
+/build/
+**/build/
+/local.properties
+/.idea/
+.DS_Store
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Android outputs
+**/*.apk
+**/*.ap_*
+
+# Keystore (keep separately; don't commit)
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# Misc
+*.swp
+*.tmp
