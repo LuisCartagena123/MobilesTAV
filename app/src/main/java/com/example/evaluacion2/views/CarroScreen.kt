@@ -12,19 +12,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,22 +35,18 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.evaluacion2.viewmodel.AppViewModel
 import com.example.evaluacion2.ui.theme.Dimens
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.ShoppingCart
+import com.example.evaluacion2.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
+fun CarroScreen(appViewModel: AppViewModel) {
     val carro by appViewModel.carro.collectAsState()
 
     androidx.compose.material3.Scaffold(
@@ -76,7 +75,7 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                 )
             } else {
                 Text(
-                    "Total: $${String.format("%.2f", carro.sumOf { it.precio })}",
+                    "Total: $${String.format("%.2f", carro.sumOf { it.libro.precio * it.cantidad })}",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -84,8 +83,8 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                 LazyColumn {
                     itemsIndexed(
                         items = carro,
-                        key = { index, libro -> "$index-${libro.id}" }
-                    ) { index, libro ->
+                        key = { _, item -> item.libro.id }
+                    ) { _, item ->
                         Card(
                             colors = CardDefaults.cardColors(
                                 containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -107,7 +106,7 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                                 horizontalArrangement = Arrangement.spacedBy(Dimens.itemSpacing)
                             ) {
                                 // Imagen (izquierda)
-                                if (libro.imagenUri.isNotBlank()) {
+                                if (item.libro.imagenUri.isNotBlank()) {
                                     Card(
                                         shape = MaterialTheme.shapes.medium,
                                         colors = CardDefaults.cardColors(
@@ -119,8 +118,8 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                                             .height(180.dp)
                                     ) {
                                         AsyncImage(
-                                            model = libro.imagenUri,
-                                            contentDescription = "Portada de ${libro.titulo}",
+                                            model = item.libro.imagenUri,
+                                            contentDescription = "Portada de ${item.libro.titulo}",
                                             modifier = Modifier.fillMaxSize(),
                                             contentScale = ContentScale.Crop
                                         )
@@ -140,20 +139,20 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                                     ) {
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
-                                                libro.titulo,
+                                                item.libro.titulo,
                                                 style = MaterialTheme.typography.titleMedium,
                                                 maxLines = 2,
                                                 overflow = TextOverflow.Ellipsis
                                             )
                                             Text(
-                                                "Autor: ${libro.autor}",
+                                                "Autor: ${item.libro.autor}",
                                                 style = MaterialTheme.typography.bodySmall,
                                                 maxLines = 1,
                                                 overflow = TextOverflow.Ellipsis
                                             )
                                         }
                                         IconButton(
-                                            onClick = { appViewModel.quitarDelCarro(libro) },
+                                            onClick = { appViewModel.quitarDelCarro(item.libro) },
                                             modifier = Modifier.size(32.dp)
                                         ) {
                                             Icon(
@@ -172,21 +171,28 @@ fun CarroScreen(navController: NavHostController, appViewModel: AppViewModel) {
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text(
-                                            "📄 ${libro.paginas} págs",
+                                            "📄 ${item.libro.paginas} págs",
                                             style = MaterialTheme.typography.bodySmall
                                         )
-                                        Text(
-                                            "$${String.format("%.2f", libro.precio)}",
-                                            style = MaterialTheme.typography.titleSmall,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
+                                        Column(horizontalAlignment = Alignment.End) {
+                                            Text(
+                                                "Cantidad: ${item.cantidad}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                            Text(
+                                                "$${String.format("%.2f", item.libro.precio * item.cantidad)}",
+                                                style = MaterialTheme.typography.titleSmall,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
                                     }
 
                                     Spacer(Modifier.height(Dimens.itemSpacing / 2))
 
-                                    if (libro.descripcion.isNotBlank()) {
+                                    if (item.libro.descripcion.isNotBlank()) {
                                         Text(
-                                            libro.descripcion,
+                                            item.libro.descripcion,
                                             style = MaterialTheme.typography.bodySmall,
                                             maxLines = 2,
                                             overflow = TextOverflow.Ellipsis,

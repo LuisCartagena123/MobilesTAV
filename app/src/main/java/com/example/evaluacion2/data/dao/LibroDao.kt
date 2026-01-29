@@ -8,7 +8,7 @@ import com.example.evaluacion2.data.entities.LibroEntity
 
 @Dao
 interface LibroDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBook(book: LibroEntity): Long
 
     @Query("SELECT * FROM libros ORDER BY id")

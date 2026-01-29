@@ -33,6 +33,8 @@ import com.example.evaluacion2.ui.components.AppTopBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +42,17 @@ fun LoginScreen(navController: NavHostController, appViewModel: AppViewModel) {
     var identifier by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    
+    // Monitorear cambios del usuario actual
+    val usuarioActual by appViewModel.usuarioActual.collectAsState()
+    
+    LaunchedEffect(usuarioActual) {
+        if (usuarioActual != null) {
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     Scaffold(topBar = { AppTopBar("Login") }) { padding ->
         LazyColumn(

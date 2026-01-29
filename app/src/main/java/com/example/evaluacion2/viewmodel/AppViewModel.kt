@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.evaluacion2.data.RoomRepository
 import com.example.evaluacion2.data.entities.UsuarioEntity
 import com.example.evaluacion2.data.entities.LibroEntity
+import com.example.evaluacion2.data.entities.CarroConLibro
 import com.example.evaluacion2.data.network.GoogleBookInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +20,8 @@ class AppViewModel(private val repository: RoomRepository) : ViewModel() {
     private val _libros = MutableStateFlow<List<LibroEntity>>(emptyList())
     val libros: StateFlow<List<LibroEntity>> = _libros
 
-    private val _carro = MutableStateFlow<List<LibroEntity>>(emptyList())
-    val carro: StateFlow<List<LibroEntity>> = _carro
+    private val _carro = MutableStateFlow<List<CarroConLibro>>(emptyList())
+    val carro: StateFlow<List<CarroConLibro>> = _carro
 
     private val _usuarios = MutableStateFlow<List<UsuarioEntity>>(emptyList())
     val usuarios: StateFlow<List<UsuarioEntity>> = _usuarios
@@ -80,9 +81,9 @@ class AppViewModel(private val repository: RoomRepository) : ViewModel() {
         }
     }
 
-    fun borrarLibro(index: Int) {
+    fun borrarLibro(libro: LibroEntity) {
         viewModelScope.launch {
-            repository.borrarLibro(index)
+            repository.borrarLibro(libro.id)
             _libros.value = repository.obtenerLibros()
         }
     }

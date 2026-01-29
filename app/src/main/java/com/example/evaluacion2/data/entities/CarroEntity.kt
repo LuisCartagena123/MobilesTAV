@@ -23,12 +23,12 @@ import androidx.room.PrimaryKey
     ],
     indices = [
         Index("usuarioEmail"),
-        Index("libroId"),
-        Index(value = ["usuarioEmail", "libroId"], unique = true)
+        Index("libroId")
     ]
 )
 data class CarroEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val usuarioEmail: String,
-    val libroId: Int
+    val libroId: Int,
+    val cantidad: Int = 1
 )

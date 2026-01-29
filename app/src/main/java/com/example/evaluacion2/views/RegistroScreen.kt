@@ -36,6 +36,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +48,17 @@ fun RegistroScreen(navController: NavHostController, appViewModel: AppViewModel)
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    
+    // Monitorear cambios del usuario actual
+    val usuarioActual by appViewModel.usuarioActual.collectAsState()
+    
+    LaunchedEffect(usuarioActual) {
+        if (usuarioActual != null) {
+            navController.navigate("home") {
+                popUpTo("login") { inclusive = false }
+            }
+        }
+    }
 
     Scaffold(topBar = { AppTopBar("Registro de Usuario") }) { padding ->
         LazyColumn(

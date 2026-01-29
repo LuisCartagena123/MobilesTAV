@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: evaluacion2-backend
+  
+  datasource:
+    url: jdbc:mysql://localhost:3307/mobilestav?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+  
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: tu_secreto_jwt_muy_seguro_cambiar_en_produccion_minimo_32_caracteres_2024
+  expiration: 86400000
+
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG
+    org.springframework.security: DEBUG

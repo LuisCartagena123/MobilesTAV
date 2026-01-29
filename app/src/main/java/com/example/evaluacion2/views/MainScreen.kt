@@ -49,7 +49,6 @@ private val bottomItems = listOf(
 @Composable
 fun MainScreen(navController: NavHostController, appViewModel: AppViewModel) {
     val tabsController = rememberNavController()
-    val usuarioState by appViewModel.usuarioActual.collectAsState()
     val carroCount by appViewModel.carro.collectAsState()
 
     Scaffold(
@@ -104,9 +103,9 @@ fun MainScreen(navController: NavHostController, appViewModel: AppViewModel) {
             navController = tabsController,
             startDestination = "inicio"
         ) {
-            composable("inicio") { LibrosScreen(navController, appViewModel) }
+            composable("inicio") { LibrosScreen(appViewModel) }
             composable("cuenta") { CuentaScreen(navController, appViewModel) }
-            composable("carro") { CarroScreen(navController, appViewModel) }
+            composable("carro") { CarroScreen(appViewModel) }
             composable("menu") { MenuScreen(navController, appViewModel) }
         }
     }

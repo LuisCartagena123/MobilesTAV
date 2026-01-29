@@ -10,11 +10,8 @@ import com.example.evaluacion2.data.dao.CarroDao
 import com.example.evaluacion2.data.entities.LibroEntity
 import com.example.evaluacion2.data.entities.UsuarioEntity
 import com.example.evaluacion2.data.entities.CarroEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-@Database(entities = [UsuarioEntity::class, LibroEntity::class, CarroEntity::class], version = 8, exportSchema = false)
+@Database(entities = [UsuarioEntity::class, LibroEntity::class, CarroEntity::class], version = 9, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun libroDao(): LibroDao
@@ -31,25 +28,8 @@ abstract class AppDatabase : RoomDatabase() {
                 ).fallbackToDestructiveMigration()
                 .build().also {
                     INSTANCE = it
-                    CoroutineScope(Dispatchers.IO).launch {
-                        insertAdminIfNeeded(it.userDao())
-                    }
                 }
             }
-
-        private suspend fun insertAdminIfNeeded(userDao: UserDao) {
-            val adminEmail = "ad@a.cl"
-            if (userDao.countByEmail(adminEmail) == 0) {
-                val adminUser = UsuarioEntity(
-                    email = adminEmail,
-                    username = "ad",
-                    nombre = "Administrador",
-                    password = "ad123",
-                    isAdmin = true
-                )
-                userDao.insertUser(adminUser)
-            }
-        }
     }
 }
 
